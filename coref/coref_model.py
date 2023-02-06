@@ -65,7 +65,7 @@ class CorefModel:  # pylint: disable=too-many-instance-attributes
         self.epochs_trained = epochs_trained
         self._docs: Dict[str, List[Doc]] = {}
         self._build_model()
-        self._build_optimizers()
+        #self._build_optimizers() MOVED TO _set_training function
         self._set_training(False)
         self._coref_criterion = CorefLoss(self.config.bce_loss_weight)
         self._span_criterion = torch.nn.CrossEntropyLoss(reduction="sum")
@@ -489,6 +489,8 @@ class CorefModel:  # pylint: disable=too-many-instance-attributes
 
     def _set_training(self, value: bool):
         self._training = value
+        if value:
+            self._build_optimizers()
         for module in self.trainable.values():
             module.train(self._training)
 
